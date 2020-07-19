@@ -59,17 +59,28 @@ def fetch_youtube_video_titles(youtube_dev_key, youtube_playlist_id):
     #     print('youtube titles : ' + title)
 
 """ SPOTIFY """
-def add_tracks_to_spotify():
+def add_tracks_to_spotify(
+    sp_client_id, 
+    sp_client_secret, 
+    sp_redirect_uri,
+    sp_username,
+    sp_playlist
+    ):
 
     # assign the env variables
-    client_id = config('SPOTIPY_CLIENT_ID')
-    client_secret = config('SPOTIPY_CLIENT_SECRET')
-    redirectURI = config('SPOTIPY_REDIRECT_URI')
-    user = config('SPOTIFY_USERNAME')
+    client_id = sp_client_id
+    client_secret = sp_client_secret
+    redirectURI = sp_redirect_uri
+    user = sp_username
 
     scope = "playlist-modify-public, playlist-modify-private, user-read-recently-played"
     # generate token 
-    token = util.prompt_for_user_token(user,scope,client_id=client_id,client_secret=client_secret,redirect_uri=redirectURI)
+    token = util.prompt_for_user_token(
+        user,scope,
+        client_id=client_id,
+        client_secret=client_secret,
+        redirect_uri=redirectURI
+        )
     sp = spotipy.Spotify(auth=token)
 
     # ignore this captions if it comes in the name of the youtube song
@@ -113,7 +124,7 @@ def add_tracks_to_spotify():
             all_track_ids.append(trackID)    
     
     # grabs songs from current spotify plalist
-    playlist_tracks = sp.user_playlist_tracks(user=user, playlist_id=config('SPOTIFY_PLAYLIST'), fields='items,uri,name,id,total')
+    playlist_tracks = sp.user_playlist_tracks(user=user, playlist_id=sp_playlist, fields='items,uri,name,id,total')
     
     """ 
     If the track id already exists in spotify playlist 
@@ -130,11 +141,26 @@ def add_tracks_to_spotify():
     # check if there are tracks that need to be added to playlist   
     if all_track_ids:
         # add the tracks to my spotify playlist
-        sp.user_playlist_add_tracks(user=user,playlist_id=config('SPOTIFY_PLAYLIST'),tracks=all_track_ids,position=None)
+        sp.user_playlist_add_tracks(
+            user=user,
+            playlist_id=sp_playlist,
+            tracks=all_track_ids,
+            position=None
+        )
 
 if __name__ == "__main__":
+    
     # execute all youtube related stuff
-    fetch_youtube_video_titles(config('YOUTUBE_API'), config('YOUTUBE_PLAYLIST'))
+    fetch_youtube_video_titles(
+        config('YOUTUBE_API'), 
+        config('YOUTUBE_PLAYLIST')
+    )
     
     # execute all spotify related stuff
-    add_tracks_to_spotify()
+    add_tracks_to_spotify(
+        config('SPOTIPY_CLIENT_ID'),
+        config('SPOTIPY_CLIENT_SECRET'),
+        config('SPOTIPY_REDIRECT_URI'),
+        config('SPOTIFY_USERNAME'),
+        config('SPOTIFY_PLAYLIST')
+    )
