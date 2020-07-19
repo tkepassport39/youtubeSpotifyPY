@@ -82,12 +82,16 @@ def main():
         '( video oficial )',
         '[video oficial]',
         '(official music video)',
+        '( official music video )',
         '[official music video]',
         '(official audio)',
         '[official audio]',
         '(instrumental)',
         '(Versión Urbana - Official Video)',
-        '(Animated Video)'
+        '(Animated Video)', 
+        '(music video)',
+        '(audio / remix)',
+        '(full version)'
     ]
 
     for songs in vidTitles:
@@ -123,8 +127,10 @@ def main():
         if pl_id in all_track_ids:
             all_track_ids.remove(pl_id)
 
-    # add the tracks to my spotify playlist    
-    sp.user_playlist_add_tracks(user=user,playlist_id=config('SPOTIFY_PLAYLIST'),tracks=all_track_ids,position=None)
+    # check if there are tracks that need to be added to playlist   
+    if all_track_ids:
+        # add the tracks to my spotify playlist
+        sp.user_playlist_add_tracks(user=user,playlist_id=config('SPOTIFY_PLAYLIST'),tracks=all_track_ids,position=None)
 
 if __name__ == "__main__":
     main()
