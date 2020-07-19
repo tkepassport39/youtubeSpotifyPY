@@ -15,14 +15,15 @@ from spotipy.oauth2 import SpotifyOAuth
 import spotipy.util as util
 
 # grabbing my api key env variable 
-DEV_KEY = config('YOUTUBE_API')
+#DEV_KEY = config('YOUTUBE_API')
 
 # creating an empty array to hold video titles
 vidTitles = []
 # get list of all track ids to import to spotify
 all_track_ids = []
 
-def main():
+""" YOUTUBE """
+def fetch_youtube_video_titles(youtube_dev_key, youtube_playlist_id):
 
     YOUTUBE_API_SERVICE_NAME = "youtube"
     YOUTUBE_API_VERSION = "v3"
@@ -31,12 +32,12 @@ def main():
     youtube = build(
         YOUTUBE_API_SERVICE_NAME, 
         YOUTUBE_API_VERSION, 
-        developerKey=DEV_KEY)
+        developerKey=youtube_dev_key)
 
     request = youtube.playlistItems().list(
         part="snippet,contentDetails",
         maxResults=25,
-        playlistId=config('YOUTUBE_PLAYLIST')
+        playlistId= youtube_playlist_id
     ).execute()
 
     # serializing json
@@ -57,20 +58,17 @@ def main():
     # for title in vidTitles:
     #     print('youtube titles : ' + title)
 
-    #### SPOTIFY ####
+""" SPOTIFY """
+def add_tracks_to_spotify():
 
+    # assign the env variables
     client_id = config('SPOTIPY_CLIENT_ID')
     client_secret = config('SPOTIPY_CLIENT_SECRET')
     redirectURI = config('SPOTIPY_REDIRECT_URI')
     user = config('SPOTIFY_USERNAME')
 
-    # get spotipy credentails from env variables
-    # auth_manager = SpotifyClientCredentials()
-    # sp = spotipy.Spotify(auth_manager=auth_manager)
-
-
     scope = "playlist-modify-public, playlist-modify-private, user-read-recently-played"
-    # oauth_manager = spotipy.oauth2.SpotifyOAuth(client_id=clientID, client_secret=clientSecret, redirect_uri=redirectURI, scope=scope, show_dialog=True, cache_path=None)
+    # generate token 
     token = util.prompt_for_user_token(user,scope,client_id=client_id,client_secret=client_secret,redirect_uri=redirectURI)
     sp = spotipy.Spotify(auth=token)
 
@@ -117,8 +115,10 @@ def main():
     # grabs songs from current spotify plalist
     playlist_tracks = sp.user_playlist_tracks(user=user, playlist_id=config('SPOTIFY_PLAYLIST'), fields='items,uri,name,id,total')
     
-    # If the track id already exists in spotify playlist 
-    # then remove it so that duplicate are not created
+    """ 
+    If the track id already exists in spotify playlist 
+    then remove it so that duplicate are not created
+    """
     for pt in playlist_tracks['items']:
         # grab track id
         pl_id = pt['track']['id']
@@ -133,4 +133,8 @@ def main():
         sp.user_playlist_add_tracks(user=user,playlist_id=config('SPOTIFY_PLAYLIST'),tracks=all_track_ids,position=None)
 
 if __name__ == "__main__":
-    main()
+    # execute all youtube related stuff
+    fetch_youtube_video_titles(config('YOUTUBE_API'), config('YOUTUBE_PLAYLIST'))
+    
+    # execute all spotify related stuff
+    add_tracks_to_spotify()
