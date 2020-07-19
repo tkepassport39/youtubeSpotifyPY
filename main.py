@@ -54,8 +54,8 @@ def main():
             vidTitles.append(a['snippet']['title'])
     
     # debug to make sure my vidTitles are there
-    for title in vidTitles:
-        print('youtube titles : ' + title)
+    # for title in vidTitles:
+    #     print('youtube titles : ' + title)
 
     #### SPOTIFY ####
 
@@ -74,6 +74,7 @@ def main():
     token = util.prompt_for_user_token(user,scope,client_id=client_id,client_secret=client_secret,redirect_uri=redirectURI)
     sp = spotipy.Spotify(auth=token)
 
+    # ignore this captions if it comes in the name of the youtube song
     ignoreCaption = [
         '(official video)',
         '[official video]',
@@ -84,11 +85,10 @@ def main():
         '[official music video]',
         '(official audio)',
         '[official audio]',
-        '(instrumental)'
+        '(instrumental)',
+        '(Versión Urbana - Official Video)',
+        '(Animated Video)'
     ]
-    # debug - get user details
-    # print(sp.user('spotify_username'))
-
 
     for songs in vidTitles:
 
@@ -96,25 +96,34 @@ def main():
             # convert both strings to lowercase for easier comparison
             lowercaseCaption = ig.lower()
             songName = songs.lower()
-            if (lowercaseCaption in songName):
+            if lowercaseCaption in songName:
                 # if song has one of the ignoreCaptions then replace it with empty string
                 songs = songName.replace(lowercaseCaption,"")
 
-        # search for x songs
+        # search for x song titles
         results = sp.search(q=songs, limit=1, type='track')
 
-        # debug        
-        # json_spotify = json.dumps(results, indent = 4)
-        # print(json_spotify)
-        
+        # grab track ID to be used to add to spotify playlist
         for track in results['tracks']['items']:
             # debug make sure I am grabbing the correct songs
-            print("name : {} - uri : {}".format(track['name'], track['uri']))
+            #print("name : {} - uri : {}".format(track['name'], track['uri']))
             trackID = track['id']
-            all_track_ids.append(trackID)
+            all_track_ids.append(trackID)    
+    
+    # grabs songs from current spotify plalist
+    playlist_tracks = sp.user_playlist_tracks(user=user, playlist_id=config('SPOTIFY_PLAYLIST'), fields='items,uri,name,id,total')
+    
+    # If the track id already exists in spotify playlist 
+    # then remove it so that duplicate are not created
+    for pt in playlist_tracks['items']:
+        # grab track id
+        pl_id = pt['track']['id']
+
+        # remove track id that already exist in the spotify playlist
+        if pl_id in all_track_ids:
+            all_track_ids.remove(pl_id)
 
     # add the tracks to my spotify playlist    
-    print(len(all_track_ids))
     sp.user_playlist_add_tracks(user=user,playlist_id=config('SPOTIFY_PLAYLIST'),tracks=all_track_ids,position=None)
 
 if __name__ == "__main__":
