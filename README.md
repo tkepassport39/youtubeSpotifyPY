@@ -4,7 +4,7 @@
 I listen to music on both youtube and spotify from time to time. When I'm coding on my computer I listen music on Youtube and when I'm out and about I listen to my playlists on Spotify. At times I find new songs on Youtube and want to add it to my spotify playlist. I have to manually search the song in spotify and then save it to a particular playlist. Why not automate this? 
 
 ## Solution
-I created this project to help resolve this problem. All I have to do now is just save a song to one of my public playlists on youtube and the code will take care of the rest. What is the rest per say? Searching for the song and automatically adding it to my spotify playlist. No more manual work!
+I created this project to help solve this problem. All I have to do now is just save a song to one of my public playlists on youtube and the code will take care of the rest. What is the rest per say? Searching for the song and automatically adding it to my spotify playlist. No more manual work!
 
 ## Steps for Setup 
 
@@ -20,7 +20,7 @@ API key:
 * Click on "Create credentials". 
 * Copy the API Key on a notepad somewhere as you will need this later on.
 
-playlist ID:
+Playlist ID:
 * Create a playlist under library if you haven't done so yet. 
 * Once you have created it look at the URL. You will notice "&list=", everything after the equal sign is the playlist ID. Copy this for later use.
 
