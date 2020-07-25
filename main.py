@@ -1,4 +1,5 @@
 import os
+from os import path
 import json
 # allows to import env var
 from decouple import config
@@ -14,9 +15,6 @@ from spotipy.oauth2 import SpotifyClientCredentials
 from spotipy.oauth2 import SpotifyOAuth
 import spotipy.util as util
 
-# grabbing my api key env variable 
-#DEV_KEY = config('YOUTUBE_API')
-
 # creating an empty array to hold video titles
 vidTitles = []
 # get list of all track ids to import to spotify
@@ -27,7 +25,6 @@ def fetch_youtube_video_titles(youtube_dev_key, youtube_playlist_id):
 
     YOUTUBE_API_SERVICE_NAME = "youtube"
     YOUTUBE_API_VERSION = "v3"
-    #DEV_KEY = "key_here"
 
     youtube = build(
         YOUTUBE_API_SERVICE_NAME, 
@@ -43,20 +40,41 @@ def fetch_youtube_video_titles(youtube_dev_key, youtube_playlist_id):
     # serializing json
     json_object = json.dumps(request, indent = 4)
 
-    # write the response to a json file
+    previousPlaylistCount = 0
+    futurePlaylistCount = 0
+
+    # if there is a data.json file already then compare with new 
+    val = path.exists("data.json")
+    if (val):
+        with open('data.json', 'r') as openFile:
+            data = json.load(openFile)
+            dataItems1 = data['items']
+        # count how many song title are in old data.json file 
+        previousPlaylistCount = len(dataItems1)    
+    
+    # write the new response to a json file
     with open('data.json', 'w') as outfile:
         outfile.write(json_object)
         
-    # read the json file
+    # read the new json file
     with open('data.json', 'r') as openFile:
-        data = json.load(openFile)
-        for a in data['items']:
+        data2 = json.load(openFile)
+        dataItems2 = data2['items']
+        # count how many song title are in the new data.json file
+        futurePlaylistCount = len(dataItems2)
+    
+    # return true if the new playlist info pulled has a discrepency in # of tracks
+    if not previousPlaylistCount == futurePlaylistCount:
+        for a in data2['items']:
             #grab the titles of the videos in my playlist
             vidTitles.append(a['snippet']['title'])
+
+        return 1
     
-    # debug to make sure my vidTitles are there
-    # for title in vidTitles:
-    #     print('youtube titles : ' + title)
+
+    # if there is no difference in track playlist # then return false
+    return 0
+
 
 """ SPOTIFY """
 def add_tracks_to_spotify(
@@ -99,8 +117,14 @@ def add_tracks_to_spotify(
         '(Versión Urbana - Official Video)',
         '(Animated Video)', 
         '(music video)',
+        '[music video]',
         '(audio / remix)',
-        '(full version)'
+        '(full version)',
+        '(Official Lyric Video)',
+        '(Clip officiel)',
+        '(Dirty Version)',
+        'Official Music Video',
+        "|"
     ]
 
     for songs in vidTitles:
@@ -151,16 +175,14 @@ def add_tracks_to_spotify(
 if __name__ == "__main__":
     
     # execute all youtube related stuff
-    fetch_youtube_video_titles(
-        config('YOUTUBE_API'), 
-        config('YOUTUBE_PLAYLIST')
-    )
+    changeInPlaylist = fetch_youtube_video_titles(config('YOUTUBE_API'), config('YOUTUBE_PLAYLIST'))
     
     # execute all spotify related stuff
-    add_tracks_to_spotify(
-        config('SPOTIPY_CLIENT_ID'),
-        config('SPOTIPY_CLIENT_SECRET'),
-        config('SPOTIPY_REDIRECT_URI'),
-        config('SPOTIFY_USERNAME'),
-        config('SPOTIFY_PLAYLIST')
-    )
+    if (changeInPlaylist):
+        add_tracks_to_spotify(
+            config('SPOTIPY_CLIENT_ID'),
+            config('SPOTIPY_CLIENT_SECRET'),
+            config('SPOTIPY_REDIRECT_URI'),
+            config('SPOTIFY_USERNAME'),
+            config('SPOTIFY_PLAYLIST')
+        )

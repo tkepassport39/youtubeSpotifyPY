@@ -1,10 +1,12 @@
 # Automate Youtube playlist import to Spotify
 
+*Note: This code was made for personal use and to help others as a *
+
 ## Problem
-I listen to music on both youtube and spotify from time to time. When I'm coding on my computer I listen music on Youtube and when I'm out and about I listen to my playlists on Spotify. At times I find new songs on Youtube and want to add it to my spotify playlist. I have to manually search the song in spotify and then save it to a particular playlist. Why not automate this? 
+I listen to music on both youtube and spotify from time to time. When I'm coding on my computer I listen music on Youtube and when I'm out and about I listen to my playlists on Spotify. At times I find new songs on Youtube and want to add it to my spotify playlist. I have to manually search the song in spotify and then save it to a particular playlist. Why not automate this?
 
 ## Solution
-I created this project to help solve this problem. All I have to do now is just save a song to one of my public playlists on youtube and the code will take care of the rest. What is the rest per say? Searching for the song and automatically adding it to my spotify playlist. No more manual work!
+I created this project to help resolve this problem. All I have to do now is just save a song into one of my public playlists in youtube and the code will take care of the rest. What is the rest per say? Searching for the song and automatically adding it to my spotify playlist. This is only a one way sync (youtube -> spotify) as per my preference.No more manual work!
 
 ## Steps for Setup 
 
@@ -20,7 +22,7 @@ API key:
 * Click on "Create credentials". 
 * Copy the API Key on a notepad somewhere as you will need this later on.
 
-Playlist ID:
+playlist ID:
 * Create a playlist under library if you haven't done so yet. 
 * Once you have created it look at the URL. You will notice "&list=", everything after the equal sign is the playlist ID. Copy this for later use.
 
@@ -40,7 +42,10 @@ Playlist ID:
 * Copy the ID for later use
 
 
-### How to setup your env variables
+## Running the code
+
+**How to setup your env variables**
+
 To setup your env variables you will need to create a ".env" file in the root of this repository. The file needs to contain the following:
 
 ```
@@ -53,7 +58,16 @@ export SPOTIFY_PLAYLIST=your_info_here
 export SPOTIFY_USERNAME=your_info_here
 ```
 
-On the terminal you are using to run this code you will need to load your env varibales. Run the following command: 
+On the terminal you are using to run this code. You will first need to load your env varibales. 
+
+Run the following command: 
 ```
 source .env
 ```
+
+Next, you will run the main code. 
+```
+python main.py
+```
+
+Your web browser will open asking you to log into your spotify account and grant permissions for the program to be able to pull your playlist information. After, copy the whole URL and paste it into your terminal. Ta'da, the sync will happy between your youtube playlist and spotify playlist.
