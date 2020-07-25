@@ -1,6 +1,6 @@
 # Automate Youtube playlist import to Spotify
 
-*Note: This code was made for personal use and to help others as a reference of code to look at*
+*Note: This code was made for my personal use.*
 
 ## Problem
 I listen to music on both youtube and spotify from time to time. When I'm coding on my computer I listen music on Youtube and when I'm out and about I listen to my playlists on Spotify. At times I find new songs on Youtube and want to add it to my spotify playlist. I have to manually search the song in spotify and then save it to a particular playlist. Why not automate this?
@@ -70,4 +70,4 @@ Next, you will run the main code.
 python main.py
 ```
 
-Your web browser will open asking you to log into your spotify account and grant permissions for the program to be able to pull your playlist information. After, copy the whole URL and paste it into your terminal. Ta'da, the sync will happy between your youtube playlist and spotify playlist.
+Your web browser will open asking you to log into your spotify account and grant permissions for the program to be able to pull your playlist information. After, copy the whole URL and paste it into your terminal. Tada...the sync will happen between your youtube playlist and spotify playlist.
