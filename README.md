@@ -1,4 +1,4 @@
-# Automate Youtube playlist import to Spotify
+# Automate Youtube Spotify playlist sync
 
 *Note: This code was made for personal use and to help others as a *
 
