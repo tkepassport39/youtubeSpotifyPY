@@ -92,6 +92,7 @@ def add_tracks_to_spotify(
     user = sp_username
 
     scope = "playlist-modify-public, playlist-modify-private, user-read-recently-played"
+    
     # generate token 
     token = util.prompt_for_user_token(
         user,scope,
@@ -100,6 +101,7 @@ def add_tracks_to_spotify(
         redirect_uri=redirectURI
         )
     sp = spotipy.Spotify(auth=token)
+
 
     # ignore this captions if it comes in the name of the youtube song
     ignoreCaption = [
@@ -177,7 +179,7 @@ if __name__ == "__main__":
     
     # execute all youtube related stuff
     changeInPlaylist = fetch_youtube_video_titles(config('YOUTUBE_API'), config('YOUTUBE_PLAYLIST'))
-    
+
     # execute all spotify related stuff
     if (changeInPlaylist):
         add_tracks_to_spotify(
