@@ -114,9 +114,9 @@ def add_tracks_to_spotify(
             '(Clip officiel)',
             '(Dirty Version)',
             'Official Music Video',
-            "|",
-            "(Audio)",
-            "(Official Performance Video)"
+            '|',
+            '(Audio)',
+            '(Official Performance Video)'
         ]
 
         for songs in vidTitles:
