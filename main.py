@@ -3,6 +3,8 @@ from os import path
 import json
 # allows to import env var
 from decouple import config
+# import regular expression module
+import re
 
 # imports for youtube api 
 import google_auth_oauthlib.flow
@@ -60,6 +62,10 @@ def fetch_youtube_video_titles(youtube_dev_key, youtube_playlist_id):
 
         return True
 
+# remove any string inside () or [] along with brackets / using regular expression
+def stripIgnoreCaption (sub):
+    result = re.sub("[\(\[].*?[\)\]]", "", sub)
+    return result
 
 ######## SPOTIFY ########
 def add_tracks_to_spotify(
@@ -91,45 +97,12 @@ def add_tracks_to_spotify(
         print("Error spotify auth")
         exit()  
     else:
-        # ignore these captions if it comes in the name of the youtube song
-        ignoreCaption = [
-            '(official video)',
-            '[official video]',
-            '(video oficial)',
-            '( video oficial )',
-            '[video oficial]',
-            '(official music video)',
-            '( official music video )',
-            '[official music video]',
-            '(official audio)',
-            '[official audio]',
-            '(instrumental)',
-            '(Versión Urbana - Official Video)',
-            '(Animated Video)', 
-            '(music video)',
-            '[music video]',
-            '(audio / remix)',
-            '(full version)',
-            '(Official Lyric Video)',
-            '(Clip officiel)',
-            '(Dirty Version)',
-            'Official Music Video',
-            '|',
-            '(Audio)',
-            '(Official Performance Video)'
-        ]
 
         for songs in vidTitles:
+            # strip any captions that are inside () and/or []
+            # ex: (official video)
+            songs = stripIgnoreCaption(songs)
 
-            for ig in ignoreCaption:
-                # convert both strings to lowercase for easier comparison
-                lowercaseCaption = ig.lower()
-                songName = songs.lower()
-                if lowercaseCaption in songName:
-                    # if song has one of the ignoreCaptions then replace it with empty string
-                    songs = songName.replace(lowercaseCaption,"")
-
-            # search for x song titles
             results = sp.search(q=songs, limit=1, type='track')
 
             # grab track ID to be used to add to spotify playlist
