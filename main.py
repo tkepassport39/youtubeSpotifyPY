@@ -64,7 +64,7 @@ def fetch_youtube_video_titles(youtube_dev_key, youtube_playlist_id):
 
 # remove any string inside () or [] along with brackets / using regular expression
 def stripIgnoreCaption (sub):
-    result = re.sub("[\(\[].*?[\)\]]", "", sub)
+    result = re.sub("[\(\[].*?[\)\]].*?[\)\]]", "", sub)
     return result
 
 ######## SPOTIFY ########
